@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🇻🇳 vietnam-banks
 
 Danh sách **đầy đủ và cập nhật** các ngân hàng đang hoạt động tại Việt Nam — hỗ trợ TypeScript, tìm kiếm linh hoạt, không phụ thuộc runtime.
@@ -111,3 +112,7 @@ Pull request thêm/sửa ngân hàng luôn được chào đón. Vui lòng tuân
 ## 📜 License
 
 MIT
+=======
+# vietnam-banks
+Danh sách các ngân hàng tại Việt Nam
+>>>>>>> 03329fee1e416fb0fafa975c3d66fe77da400a5b
