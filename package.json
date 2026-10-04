@@ -1,0 +1,50 @@
+{
+    "name": "vietnam-banks",
+    "version": "1.0.0",
+    "description": "Danh sách đầy đủ các ngân hàng tại Việt Nam kèm tên, SWIFT, website, loại hình — hỗ trợ TypeScript, tìm kiếm linh hoạt.",
+    "keywords": [
+        "vietnam",
+        "bank",
+        "banks",
+        "ngan-hang",
+        "swift",
+        "bic",
+        "vietcombank",
+        "techcombank",
+        "vietinbank"
+    ],
+    "author": "Le Gia Nguyen",
+    "license": "MIT",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "tsup": "^8.0.2",
+        "typescript": "^5.4.0",
+        "vitest": "^1.6.0"
+    },
+    "engines": {
+        "node": ">=16"
+    }
+}
