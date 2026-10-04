@@ -11,10 +11,26 @@
         "bic",
         "vietcombank",
         "techcombank",
-        "vietinbank"
+        "vietinbank",
+        "vietnamese",
+        "banking",
+        "fintech",
+        "typescript"
     ],
-    "author": "Le Gia Nguyen",
+    "author": "Le Gia Nguyen (https://github.com/legianguyenit)",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/legianguyenit/vietnam-banks.git"
+    },
+    "homepage": "https://github.com/legianguyenit/vietnam-banks#readme",
+    "bugs": {
+        "url": "https://github.com/legianguyenit/vietnam-banks/issues"
+    },
+    "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/legianguyenit"
+    },
     "type": "module",
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
@@ -24,7 +40,8 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js",
             "require": "./dist/index.cjs"
-        }
+        },
+        "./package.json": "./package.json"
     },
     "files": [
         "dist",
@@ -37,6 +54,7 @@
         "dev": "tsup --watch",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
+        "test:watch": "vitest",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
@@ -46,5 +64,9 @@
     },
     "engines": {
         "node": ">=16"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
     }
 }
