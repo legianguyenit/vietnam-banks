@@ -26,7 +26,7 @@ export const banks: readonly Bank[] = Object.freeze([
   {
     brandName: 'VPBank',
     fullName: 'Ngân hàng TMCP Việt Nam Thịnh Vượng',
-    fullNameEn: 'Vietnam Commercial Joint Stock Bank for Private Enterprise',
+    fullNameEn: 'Vietnam Prosperity Joint Stock Commercial Bank',
     type: 'Thương mại Cổ phần',
     swift: 'VPBKVNVX',
     website: 'vpbank.com.vn',
