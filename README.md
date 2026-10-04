@@ -36,12 +36,7 @@
 
 ```bash
 npm install vietnam-banks
-# hoặc với yarn
-yarn add vietnam-banks
-# hoặc với pnpm
-pnpm add vietnam-banks
-# hoặc với bun
-bun add vietnam-banks
+
 ```
 
 ---
