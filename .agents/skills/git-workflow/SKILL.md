@@ -1,15 +1,15 @@
 ---
 name: git-workflow
-description: Enforces a safe Git workflow for coding tasks, including mandatory branch creation before new code, standardized branch naming, validation, conventional commits, and safe push/pull request practices.
+description: Enforces a safe Git workflow for coding tasks, including mandatory branch creation before new code, standardized branch naming, validation, conventional commits, and a fully automated commit-push-merge-sync cycle via /commit.
 ---
 
-# Git Workflow Skill
+# Git Workflow Skill — vietnam-banks
 
-This skill enforces a professional, safe, and controlled Git workflow optimized for AI-assisted ("vibe") coding. Every AI agent working on code modifications within this workspace MUST strictly adhere to these rules.
+This skill enforces a professional, safe, and controlled Git workflow for the **vietnam-banks** TypeScript library. Every AI agent working on code modifications within this workspace MUST strictly adhere to these rules.
 
 ---
 
-## CORE RULES
+## PART 1 — PRE-CODING: BRANCH SAFETY
 
 ### RULE #1 — MANDATORY BRANCH CREATION BEFORE CODING
 
@@ -19,11 +19,11 @@ Before starting ANY coding task (new feature, bug fix, refactor, dependency upda
 
 1. Inspect Git status: `git status`
 2. Determine current branch: `git branch --show-current`
-3. Inspect working tree and remote status: `git remote -v`
+3. Inspect remote: `git remote -v`
 4. Identify default branch (`main` or `master`).
 5. **If currently on `main` or `master`**:
    - DO NOT edit code immediately.
-   - MUST create a new feature/fix branch first: `git switch -c <type>/<short-description>`
+   - MUST create a new branch first: `git switch -c <type>/<short-description>`
 6. Confirm branch switch: `git branch --show-current`
 7. **Only after successfully switching to a valid branch is code modification allowed.**
 
@@ -37,76 +37,42 @@ All branch names MUST follow the format:
 <type>/<short-description>
 ```
 
-### Allowed Branch Types
+### Allowed Branch Types — vietnam-banks Context
 
 | Type | Purpose | Example |
 | :--- | :--- | :--- |
-| `feature/` | New functionality or feature | `feature/add-bank-search` |
-| `fix/` | Standard bug fixes | `fix/swift-code-parser` |
-| `refactor/` | Code refactoring without changing public behavior | `refactor/bank-data-structure` |
+| `feature/` | New functionality | `feature/add-bank-search` |
+| `fix/` | Bug fixes | `fix/swift-code-parser` |
+| `refactor/` | Code restructure (no behavior change) | `refactor/bank-data-structure` |
 | `docs/` | Documentation updates | `docs/update-readme` |
 | `test/` | Adding or updating tests | `test/bank-validation` |
-| `chore/` | Maintenance, configuration, dependencies | `chore/update-dependencies` |
+| `chore/` | Maintenance, config, dependencies | `chore/update-dependencies` |
 | `perf/` | Performance optimizations | `perf/optimize-bank-search` |
-| `build/` | Build scripts or packaging tooling | `build/npm-package` |
-| `ci/` | Continuous Integration / CD workflows | `ci/github-actions` |
+| `build/` | Build scripts or packaging | `build/tsup-config` |
+| `ci/` | CI/CD workflows | `ci/github-actions` |
 | `hotfix/` | Production-critical emergency fixes | `hotfix/security-patch` |
 
 ### Branch Naming Rules
 - MUST be **lowercase**
 - MUST use **kebab-case** (hyphens separating words)
-- NO spaces, NO accented Vietnamese characters, NO unnecessary special characters
-- Short, clear, and descriptive of the actual goal
-- NEVER use generic names like `test`, `new`, `update`, `fix`, `abc`, `dev`, `branch1`, `my-branch`
-- NEVER use camelCase (`feature/AddBank`), snake_case (`feature/add_bank`), or spaces (`feature/add bank`). Use `feature/add-bank`.
+- NO spaces, NO accented characters, NO special characters
+- Short, clear, and descriptive
+- NEVER use generic names like `test`, `new`, `update`, `fix`, `abc`, `dev`
+- NEVER use camelCase, snake_case, or spaces. Use `feature/add-bank`.
 
 ---
 
-## BRANCH CREATION WORKFLOW
-
-For every coding task, the agent MUST execute the following sequence:
-
-```text
-1. Inspect repository & architecture
-2. Inspect Git status (git status)
-3. Inspect current branch (git branch --show-current)
-4. Determine task type (feature, fix, refactor, docs, etc.)
-5. Generate standardized branch name
-6. Create and switch to branch (git switch -c <type>/<short-description>)
-7. Verify current branch
-8. ONLY THEN modify code
-```
-
-- If the branch name can be clearly inferred from the user prompt (e.g. "Add bank search by SWIFT code"), infer `type = feature` and `description = bank-search-swift`, then run `git switch -c feature/bank-search-swift` directly without asking.
-- If the task is too ambiguous to determine the branch type, ask the user before creating the branch.
-
----
-
-## HANDLING EXISTING UNCOMMITTED CHANGES
+## HANDLING UNCOMMITTED CHANGES
 
 If `git status` reveals existing uncommitted changes when starting a task:
 
 1. **NEVER silently reset, discard, or stash the user's uncommitted work.**
-2. Distinguish between *existing user changes* and *changes created by the current task*.
-3. If on `main` with uncommitted user changes:
-   - DO NOT run `git reset --hard` or `git clean -fd`.
-   - DO NOT discard or overwrite the changes.
-   - If switching to a new branch retains the uncommitted changes cleanly (`git switch -c <branch-name>`), do so safely.
-   - If there is a risk of collision, notify the user and ask for guidance before proceeding.
-
----
-
-## SYNC & DESTRUCTIVE COMMAND PROTECTION
-
-- Check remote status with `git fetch origin` if appropriate.
-- DO NOT rebase or reset unless strictly necessary.
-- **NEVER use destructive commands** like `git reset --hard`, `git clean -fd`, or `git checkout -- .` unless explicitly requested by the user.
+2. If on `main` with uncommitted user changes, switch to a new branch safely: `git switch -c <branch-name>` (Git will carry the changes over).
+3. If there is a risk of collision, notify the user and ask for guidance before proceeding.
 
 ---
 
 ## CODING WORKFLOW
-
-After branch creation:
 
 ```text
 Branch Created
@@ -125,48 +91,42 @@ Review Git Diff
      ↓
 Atomic Commit (Conventional Commit)
      ↓
-Push Branch
-     ↓
-Create / Update Pull Request
+Push Branch → PR / merge
 ```
-
-- Prioritize small, incremental, focused changes.
-- Avoid refactoring code outside the task scope.
 
 ---
 
 ## VALIDATION BEFORE COMMIT
 
-Before staging and committing, the agent MUST run available validation scripts defined in `package.json` (or project equivalent):
+Before committing, run the validation scripts defined in `package.json`:
 
-1. Check project scripts first (e.g. read `package.json`).
-2. Run applicable validation commands:
-   - `npm run lint` (if available)
-   - `npm run typecheck` (if available)
-   - `npm test` (if available)
-   - `npm run build` (if available)
-3. **If any validation fails**:
-   - DO NOT commit broken code or claim the task is complete.
-   - Analyze error logs, fix the root cause, re-run validation.
+```bash
+npm run build        # TypeScript compile via tsup (REQUIRED)
+npm run typecheck    # tsc --noEmit (if available)
+npm test             # tests (if available)
+```
+
+**If any validation fails**: DO NOT commit. Fix the root cause first.
 
 ---
 
-## BEFORE COMMIT CHECKLIST & SAFE STAGING
+## SAFE STAGING CHECKLIST
 
-Before committing, run:
+Before staging and committing, run:
+
 ```bash
 git status
 git diff
 git diff --stat
 ```
 
-### Review Checklist
-1. Are there files outside task scope?
-2. Are there any secrets, API keys, tokens, or passwords?
-3. Is `.env` or `.env.local` accidentally tracked/staged?
-4. Are temporary/generated build artifacts present?
-5. Is there leftover debug code or unnecessary `console.log` statements?
-6. Are there unresolved `TODO` / `FIXME` comments added during this task?
+Check:
+1. Files outside task scope?
+2. Secrets, API keys, tokens, passwords?
+3. `.env` or `.env.local` accidentally tracked?
+4. Temporary / build artifacts (`dist/`)?
+5. Leftover debug code or unnecessary `console.log`?
+6. Unresolved `TODO` / `FIXME` added during this task?
 
 ### Staging Rules
 - **NEVER blindly run `git add .`** if untracked secret files or irrelevant changes exist.
@@ -175,77 +135,148 @@ git diff --stat
 
 ---
 
-## COMMIT CONVENTION (CONVENTIONAL COMMITS)
+## PART 2 — COMMIT AUTOMATION (`/commit`)
 
-Every commit message MUST follow the **Conventional Commits** standard:
+> [!IMPORTANT]
+> When the user runs `/commit`, the agent MUST execute ALL 4 steps sequentially and automatically, without stopping or asking the user to do anything manually. The workflow is complete only when back on `main` with a clean workspace.
 
-```text
-<type>(<scope>): <description>
+---
+
+### Step 1 — Analyze & Group Changes
+
+```bash
+git status
+git diff --cached
+git diff
 ```
 
-### Primary Commit Types
-- `feat`: A new feature
-- `fix`: A bug fix
-- `refactor`: Code change that neither fixes a bug nor adds a feature
-- `docs`: Documentation only changes
-- `test`: Adding missing tests or correcting existing tests
-- `chore`: Changes to build process, auxiliary tools, dependencies
-- `perf`: A code change that improves performance
-- `build`: Changes that affect the build system or external dependencies
-- `ci`: Changes to CI configuration files and scripts
-- `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
+If changes span multiple concerns, **DO NOT put them all in one commit**. Group by logical unit — each group gets its own commit.
 
-### Commit Rules
-- Short, concise, imperative present tense ("add", not "added" or "adds")
+---
+
+### Step 2 — Commit & Push to Feature Branch
+
+```bash
+# Run validation first
+npm run build
+
+# Stage and commit each logical group
+git add <files-group-1>
+git commit -m "feat(scope): description"
+
+git add <files-group-2>
+git commit -m "style(scope): description"
+
+git push origin <feature-branch>
+```
+
+---
+
+### Step 3 — Merge Feature Branch into `main`
+
+> [!CAUTION]
+> DO NOT SKIP THIS STEP. Agent MUST auto-merge after push — never ask the user to merge via GitHub UI.
+
+```bash
+git checkout main
+git pull origin main
+git merge <feature-branch>
+git push origin main
+```
+
+---
+
+### Step 4 — Cleanup & Sync
+
+```bash
+git branch -d <feature-branch>               # delete local branch
+git push origin --delete <feature-branch>    # delete remote branch
+git branch --show-current                    # confirm: should be main
+git status                                   # confirm: clean workspace
+```
+
+---
+
+## COMMIT CONVENTION (CONVENTIONAL COMMITS)
+
+Every commit MUST follow:
+
+```text
+<type>(<scope>): <short description>
+```
+
+### Types for vietnam-banks
+
+| Type | When | Example |
+|---|---|---|
+| `feat` | New data, API, or feature | `feat(banks): add Agribank SWIFT codes` |
+| `fix` | Bug fix | `fix(parser): handle missing bin field` |
+| `refactor` | Code restructure (no feature/bug) | `refactor(types): extract BankInfo interface` |
+| `docs` | README, JSDoc, comments | `docs(readme): add usage examples for lookup` |
+| `test` | Tests | `test(banks): add validation for VCB data` |
+| `chore` | Dependencies, build config | `chore(deps): upgrade tsup to v8` |
+| `perf` | Performance improvement | `perf(search): index banks by bin for O(1) lookup` |
+| `build` | Build system changes | `build(tsup): enable dts generation` |
+| `ci` | CI/CD changes | `ci(actions): add typecheck step` |
+| `style` | Formatting, whitespace (no logic change) | `style(data): normalize bank name casing` |
+
+### Scope Names — vietnam-banks
+
+`banks` · `data` · `types` · `parser` · `search` · `build` · `deps` · `docs` · `ci` · `tests` · `exports`
+
+### Description Rules
+- Present tense, imperative: `add`, `fix`, `update`, `remove` — NOT `added`, `fixed`
+- Lowercase first letter after colon
+- No period at end
+- Max 50 characters for the subject line
 - Written in English
-- Clear and descriptive
-- NEVER use generic messages (`update`, `fix bug`, `changes`, `done`, `final`, `test`, `abc`, `update code`).
 
 ---
 
 ## ATOMIC COMMITS
 
 - Each commit MUST represent **one single logical change**.
-- Do not combine unrelated modifications (e.g. adding a search feature + updating unrelated dependencies + rewriting README) into a single commit.
+- Do not combine unrelated modifications into a single commit.
 - Split independent work into separate atomic commits.
 
 ---
 
-## PUSH WORKFLOW
+## PUSH RULES
 
 - Always verify current branch before pushing: `git branch --show-current`
 - **NEVER push directly to `main` or `master`.**
 - First push of a new branch: `git push -u origin <branch-name>`
 - Subsequent pushes: `git push`
-- **NEVER force push (`git push --force` / `git push -f`)** unless explicitly requested by the user after assessing all risks.
+- **NEVER force push** unless explicitly requested by the user after assessing all risks.
 
 ---
 
-## PULL REQUEST WORKFLOW
+## PULL REQUEST FORMAT
 
-After pushing:
-- PR title MUST follow Conventional Commit format: `feat(bank): add SWIFT bank search`
-- PR description MUST include:
-  ```markdown
-  ## Summary
-  - Short overview of changes
+After pushing, create a PR with:
 
-  ## Changes
-  - Detailed list of modifications
+**Title:** `feat(banks): add Agribank SWIFT codes` *(follows Conventional Commit format)*
 
-  ## Validation
-  - Verification steps performed (e.g., build, typecheck, tests)
+**Description:**
 
-  ## Breaking Changes
-  - None (or list breaking changes)
-  ```
-- DO NOT merge PRs automatically unless explicitly directed by the user.
+```markdown
+## Summary
+- Short overview of changes
+
+## Changes
+- Detailed list of modifications
+
+## Validation
+- `npm run build` — ✅ passed
+- `npm run typecheck` — ✅ passed
+
+## Breaking Changes
+- None (or list breaking changes)
+```
 
 ---
 
 ## MAIN BRANCH PROTECTION
-
-`main` and `master` are strictly protected branches.
 
 ```text
 DO NOT CODE DIRECTLY ON MAIN
@@ -257,7 +288,7 @@ DO NOT PUSH DIRECTLY TO MAIN
 
 ## AGENT RESPONSE FORMAT
 
-When starting a coding task, briefly notify the user:
+**When starting a coding task:**
 
 ```text
 Task: <Short task description>
@@ -267,14 +298,14 @@ Branch: <type>/<short-description>
 Creating branch before implementation...
 ```
 
-Upon completing the task:
+**Upon completing a task:**
 
 ```text
 Implemented:
 - <Summary of changes>
 
 Validation:
-- <Status of typecheck / build / tests>
+- npm run build — ✅ passed
 
 Commit:
 <type>(<scope>): <description>
@@ -283,15 +314,48 @@ Branch:
 <branch-name>
 ```
 
-If code is changed but not yet committed:
+---
 
-```text
-Validation:
-- <Status of validation>
+## EXAMPLE COMMIT SEQUENCE — vietnam-banks
 
-Commit:
-Not created yet.
+```bash
+# Group 1: dependency change
+git add package.json package-lock.json
+git commit -m "chore(deps): upgrade tsup to v8"
+
+# Group 2: new bank data
+git add src/data/agribank.ts
+git commit -m "feat(banks): add complete Agribank branch data"
+
+# Group 3: type improvements
+git add src/types.ts src/index.ts
+git commit -m "refactor(types): extract BankInfo and BranchInfo interfaces"
+
+# Group 4: docs
+git add README.md
+git commit -m "docs(readme): add lookup usage examples"
+
+# Push, merge, cleanup
+git push origin feature/add-agribank-data
+git checkout main
+git pull origin main
+git merge feature/add-agribank-data
+git push origin main
+git branch -d feature/add-agribank-data
+git push origin --delete feature/add-agribank-data
 ```
+
+---
+
+## DEFINITION OF DONE (`/commit`)
+
+- [ ] All changes committed in logical groups with Conventional Commits messages
+- [ ] `npm run build` passes before each commit
+- [ ] Feature branch pushed to remote origin
+- [ ] Feature branch **merged** into `main`
+- [ ] `main` **pushed** to remote after merge
+- [ ] Local feature branch **deleted**
+- [ ] Agent is back on `main` with latest code, workspace clean
 
 ---
 
@@ -307,5 +371,6 @@ Not created yet.
 8. **Always use Conventional Commits.**
 9. **Never force-push unless explicitly requested.**
 10. **Never use destructive Git commands casually (`reset --hard`, `clean -fd`).**
-11. **Validate code (`typecheck`, `build`, `test`) before declaring completion.**
+11. **Validate (`npm run build`) before declaring completion.**
 12. **Keep commits atomic and logically scoped.**
+13. **`/commit` MUST auto-complete all 4 steps — push, merge, cleanup — without stopping.**
