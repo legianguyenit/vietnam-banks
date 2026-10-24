@@ -1,15 +1,22 @@
+<div align="center">
+
 # 🇻🇳 vietnam-banks
 
-> **Danh sách ngân hàng Việt Nam đầy đủ, chính xác kèm API tra cứu mạnh mẽ cho Node.js & TypeScript.**  
-> **Comprehensive & accurate Vietnam Banks database with flexible lookup APIs for Node.js & TypeScript.**
+**Danh sách ngân hàng Việt Nam đầy đủ & chính xác — với API tra cứu mạnh mẽ cho Node.js & TypeScript.**  
+**Comprehensive Vietnam Banks dataset with flexible lookup APIs for Node.js & TypeScript.**
 
-[![npm version](https://img.shields.io/npm/v/vietnam-banks.svg?style=flat-square)](https://www.npmjs.com/package/vietnam-banks)
-[![license](https://img.shields.io/npm/l/vietnam-banks.svg?style=flat-square)](./LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![npm version](https://img.shields.io/npm/v/vietnam-banks?style=flat-square&color=cb3837)](https://www.npmjs.com/package/vietnam-banks)
+[![npm downloads](https://img.shields.io/npm/dm/vietnam-banks?style=flat-square&color=cb3837)](https://www.npmjs.com/package/vietnam-banks)
+[![license](https://img.shields.io/npm/l/vietnam-banks?style=flat-square&color=22c55e)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![ESM + CJS](https://img.shields.io/badge/Module-ESM%20%2B%20CJS-f59e0b?style=flat-square)](https://nodejs.org/)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-22c55e?style=flat-square)](#)
+
+</div>
 
 ---
 
-## 🌐 Ngôn ngữ / Languages
+## 🌐 Ngôn ngữ / Language
 
 - [🇻🇳 Tiếng Việt](#-tiếng-việt)
 - [🇬🇧 English](#-english)
@@ -17,18 +24,21 @@
 ---
 
 <a id="-tiếng-việt"></a>
-# 🇻🇳 Tiếng Việt
 
-`vietnam-banks` là thư viện mã nguồn mở nhẹ (zero-dependency) cung cấp danh sách đầy đủ và cập nhật nhất về các ngân hàng đang hoạt động tại Việt Nam. Thư viện tích hợp sẵn các hàm tra cứu theo **Brand Name**, **mã SWIFT/BIC**, **Website**, **Loại hình ngân hàng**, và **Tìm kiếm full-text đa trường**.
+## 🇻🇳 Tiếng Việt
+
+`vietnam-banks` là thư viện **zero-dependency** cung cấp bộ dữ liệu đầy đủ và cập nhật nhất về các ngân hàng đang hoạt động tại Việt Nam, kèm theo các hàm tiện ích tra cứu tốc độ cao.
 
 ### ✨ Tính năng nổi bật
 
-- 📋 **Dữ liệu đầy đủ & chính xác**: Hơn 45+ ngân hàng thuộc các nhóm Thương mại Cổ phần, Thương mại Nhà nước, 100% Vốn nước ngoài, Liên doanh, Hợp tác xã, TNHH MTV, Ngân hàng Chính sách.
-- 🔎 **Tra cứu linh hoạt**: Theo `brandName`, `swift`, `website`, `type`.
-- 🔤 **Tìm kiếm thông minh**: Hỗ trợ tìm kiếm theo từ khoá tiếng Việt và tiếng Anh.
-- 🧊 **Dữ liệu an toàn**: Dữ liệu được đóng băng (`Object.freeze`), đảm bảo không bị tác động mutate ngẫu nhiên.
-- 🌳 **Hỗ trợ tối đa**: ESM + CommonJS (CJS) + TypeScript declaration files (`.d.ts`).
-- 🪶 **Siêu nhẹ**: Zero runtime dependencies.
+| | Tính năng |
+|---|---|
+| 📋 | **Dữ liệu đầy đủ** — 45+ ngân hàng: TMCP, Nhà nước, 100% vốn nước ngoài, Liên doanh, Hợp tác xã, TNHH MTV, Chính sách |
+| 🔎 | **Tra cứu O(1)** — Map precomputed theo `brandName`, `SWIFT`, `type` |
+| 🔤 | **Tìm kiếm không dấu** — `searchBanks('ngoai thuong')` → Vietcombank |
+| 🧊 | **Bất biến** — Dữ liệu được `Object.freeze`, không thể mutate ngoài ý muốn |
+| 📦 | **Dual Module** — ESM + CommonJS + TypeScript `.d.ts` |
+| 🪶 | **Siêu nhẹ** — Zero runtime dependencies |
 
 ---
 
@@ -36,141 +46,195 @@
 
 ```bash
 npm install vietnam-banks
-
+# hoặc
+yarn add vietnam-banks
+# hoặc
+pnpm add vietnam-banks
 ```
 
 ---
 
 ### 🚀 Hướng dẫn sử dụng
 
-#### 1. Tra cứu ngân hàng cơ bản
+#### 1. Tra cứu ngân hàng
 
 ```typescript
-import { 
-  getBankByBrand, 
-  getBankBySwift, 
-  getBankByWebsite, 
-  BankBrand 
+import {
+  getBankByBrand,
+  getBankBySwift,
+  getBankByWebsite,
+  BankBrand,
 } from 'vietnam-banks';
 
-// Tra cứu bằng BankBrand (Autocompleted)
+// Tra cứu bằng BankBrand (có autocomplete, tránh typo)
 const vcb = getBankByBrand(BankBrand.Vietcombank);
-console.log(vcb?.fullName); 
-// Output: "Ngân hàng TMCP Ngoại Thương Việt Nam"
-console.log(vcb?.swift); 
-// Output: "BFTVVNVX"
+console.log(vcb?.fullName);   // 'Ngân hàng TMCP Ngoại Thương Việt Nam'
+console.log(vcb?.swift);      // 'BFTVVNVX'
 
-// Tra cứu theo mã SWIFT / BIC (không phân biệt hoa thường)
-const techcombank = getBankBySwift('VTCBVNVX');
-console.log(techcombank?.brandName); 
-// Output: "Techcombank"
+// Tra cứu theo mã SWIFT/BIC (không phân biệt hoa thường)
+const tcb = getBankBySwift('VTCBVNVX');
+console.log(tcb?.brandName);  // 'Techcombank'
 
-// Tra cứu theo URL website (tự động loại bỏ http://, https://, trailing slash)
+// Tra cứu theo website (tự động bỏ https://, www., trailing slash)
 const acb = getBankByWebsite('https://acb.com.vn/');
-console.log(acb?.brandName); 
-// Output: "ACB"
+console.log(acb?.brandName);  // 'ACB'
 ```
 
-#### 2. Tìm kiếm & Lọc ngân hàng
+#### 2. Tìm kiếm & Lọc
 
 ```typescript
-import { searchBanks, getBanksByType, groupBanksByType } from 'vietnam-banks';
+import { searchBanks, getBanksByType, BANKS_BY_TYPE } from 'vietnam-banks';
 
-// Tìm kiếm full-text (tìm trong brandName, fullName, fullNameEn, swift, website)
-const searchResult = searchBanks('Sài Gòn');
-// Kết quả trả về các ngân hàng liên quan: Sacombank, SCB, SAIGONBANK...
+// Tìm kiếm KHÔNG DẤU — tính năng mới
+searchBanks('ngoai thuong');  // → [Vietcombank]
+searchBanks('quan doi');      // → [MBBANK]
+searchBanks('sai gon');       // → [Sacombank, SCB, SAIGONBANK, ...]
 
-// Lọc danh sách ngân hàng theo loại hình
+// Tìm theo từ khoá tiếng Anh
+searchBanks('Military');      // → [MBBANK]
+
+// Lọc theo loại hình — O(1) precomputed
 const foreignBanks = getBanksByType('100% vốn nước ngoài');
 console.log(foreignBanks.map(b => b.brandName));
-// Output: ['Woori', 'UOB', 'HSBC', 'PBVN', 'SCBVL', 'SHBVN', 'ANZVL', 'CIMB', 'HLBVN']
+// ['Woori', 'UOB', 'HSBC', 'PBVN', 'SCBVL', 'SHBVN', 'ANZVL', 'CIMB', 'HLBVN']
 
-// Nhóm tất cả ngân hàng theo loại hình
-const groupedBanks = groupBanksByType();
-console.log(groupedBanks['Thương mại Cổ phần'].length);
+// Truy cập trực tiếp map precomputed
+const jointStockBanks = BANKS_BY_TYPE['Thương mại Cổ phần'];
 ```
 
-#### 3. Sử dụng với CommonJS (Node.js legacy)
+#### 3. Sắp xếp & Lọc nâng cao
+
+```typescript
+import {
+  sortBanks,
+  getBanksByEstablishedYear,
+  groupBanksByType,
+  isValidSwift,
+} from 'vietnam-banks';
+
+// Sắp xếp theo ngày thành lập (cũ → mới)
+const oldest = sortBanks('establishedDate', 'asc');
+console.log(oldest[0].brandName); // 'SAIGONBANK' (1987)
+
+// Sắp xếp theo tên thương hiệu (A → Z)
+const alphabetical = sortBanks('brandName');
+
+// Ngân hàng thành lập năm 1993
+const banks1993 = getBanksByEstablishedYear(1993);
+console.log(banks1993.map(b => b.brandName));
+// ['VPBank', 'Techcombank', 'ACB', 'SHB', 'ABBANK', 'PGBank', 'GPBank']
+
+// Gom nhóm tất cả ngân hàng theo loại hình
+const grouped = groupBanksByType();
+console.log(Object.keys(grouped));
+
+// Validate mã SWIFT theo chuẩn ISO 9362
+isValidSwift('BFTVVNVX');  // true
+isValidSwift('INVALID');   // false
+```
+
+#### 4. Sử dụng với CommonJS
 
 ```javascript
 const { banks, getBankByBrand, BankBrand } = require('vietnam-banks');
 
 const bank = getBankByBrand(BankBrand.MBBANK);
-console.log(bank.fullNameEn);
-// Output: "Military Commercial Joint Stock Bank"
+console.log(bank.fullNameEn); // 'Military Commercial Joint Stock Bank'
 ```
 
 ---
 
-### 📐 Cấu trúc dữ liệu & Type Definitions
+### 📐 Cấu trúc dữ liệu
 
 #### `Bank` Interface
 
 ```typescript
-export interface Bank {
-  /** Tên thương hiệu viết ngắn gọn, ví dụ: "Vietcombank" */
+interface Bank {
+  /** Tên thương hiệu ngắn gọn, vd: "Vietcombank" */
   readonly brandName: string;
-  /** Tên đầy đủ bằng tiếng Việt */
+  /** Tên đầy đủ tiếng Việt */
   readonly fullName: string;
-  /** Tên đầy đủ bằng tiếng Anh */
+  /** Tên đầy đủ tiếng Anh */
   readonly fullNameEn: string;
   /** Loại hình ngân hàng */
   readonly type: BankType;
-  /** Mã SWIFT/BIC (null nếu ngân hàng không có/không dùng mã SWIFT) */
+  /** Mã SWIFT/BIC (null nếu không có) */
   readonly swift: string | null;
   /** Website chính thức (không bao gồm https://) */
   readonly website: string;
-  /** Ngày thành lập theo định dạng ISO 8601 (YYYY-MM-DD) */
+  /** Ngày thành lập — ISO 8601 (YYYY-MM-DD) */
   readonly establishedDate: string;
 }
 ```
 
 #### `BankType`
 
-Các loại hình ngân hàng được phân loại sẵn:
-- `'Thương mại Cổ phần'`
-- `'Thương mại Nhà nước'`
-- `'Ngân hàng chính sách'`
-- `'100% vốn nước ngoài'`
-- `'Ngân hàng Liên doanh'`
-- `'NH Hợp tác xã'`
-- `'TNHH MTV'`
+```typescript
+type BankType =
+  | 'Thương mại Cổ phần'
+  | 'Thương mại Nhà nước'
+  | 'Ngân hàng chính sách'
+  | '100% vốn nước ngoài'
+  | 'Ngân hàng Liên doanh'
+  | 'NH Hợp tác xã'
+  | 'TNHH MTV';
+```
 
 ---
 
-### 📚 Danh sách API đầy đủ
+### 📚 API Reference
 
-| Tên hàm / Hằng số | Kiểu trả về | Mô tả chi tiết |
+#### Hằng số / Constants
+
+| Export | Kiểu | Mô tả |
 | :--- | :--- | :--- |
-| `banks` | `readonly Bank[]` | Mảng chứa toàn bộ danh sách ngân hàng Việt Nam. |
-| `BANKS_BY_BRAND` | `Readonly<Record<string, Bank>>` | Map tra cứu nhanh `brandName -> Bank`. |
-| `BANKS_BY_SWIFT` | `Readonly<Record<string, Bank>>` | Map tra cứu nhanh `swift -> Bank` (chỉ ngân hàng có SWIFT). |
-| `BankBrand` | `Object` | Hằng số autocomplete brand name (tránh gõ sai tên). |
-| `getBankByBrand(brandName)` | `Bank \| undefined` | Tìm ngân hàng theo tên thương hiệu (case-insensitive). |
-| `getBankBySwift(swift)` | `Bank \| undefined` | Tìm ngân hàng theo mã SWIFT/BIC (case-insensitive). |
-| `getBankByWebsite(website)` | `Bank \| undefined` | Tìm ngân hàng theo domain / URL website. |
-| `getBanksByType(type)` | `Bank[]` | Trả về danh sách ngân hàng thuộc loại hình tương ứng. |
-| `searchBanks(keyword)` | `Bank[]` | Tìm kiếm đa trường theo từ khóa. |
-| `groupBanksByType()` | `Record<BankType, Bank[]>` | Gom nhóm các ngân hàng theo loại hình. |
-| `getAllBrandNames()` | `string[]` | Trả về mảng chứa danh sách tất cả Brand Name. |
-| `getAllSwifts()` | `string[]` | Trả về mảng chứa tất cả mã SWIFT hiện có. |
-| `countBanks()` | `number` | Trả về tổng số lượng ngân hàng. |
+| `banks` | `readonly Bank[]` | Toàn bộ danh sách ngân hàng |
+| `BANKS_BY_BRAND` | `Readonly<Record<string, Bank>>` | Map tra cứu nhanh theo `brandName` — O(1) |
+| `BANKS_BY_SWIFT` | `Readonly<Record<string, Bank>>` | Map tra cứu nhanh theo `swift` (uppercase) — O(1) |
+| `BANKS_BY_TYPE` | `Readonly<Record<BankType, Bank[]>>` | Map nhóm theo `type` — O(1) |
+| `BANK_TYPES` | `readonly BankType[]` | Danh sách các loại hình ngân hàng |
+| `BankBrand` | `{ [key]: string }` | Hằng số brand name cho autocomplete |
+
+#### Hàm tra cứu / Lookup Functions
+
+| Hàm | Trả về | Mô tả |
+| :--- | :--- | :--- |
+| `getBankByBrand(name)` | `Bank \| undefined` | Tìm theo brand name (case-insensitive) |
+| `getBankBySwift(swift)` | `Bank \| undefined` | Tìm theo mã SWIFT/BIC |
+| `getBankByWebsite(url)` | `Bank \| undefined` | Tìm theo domain / URL website |
+| `getBanksByType(type)` | `Bank[]` | Lọc theo loại hình ngân hàng |
+
+#### Hàm tìm kiếm & tổng hợp / Search & Utility Functions
+
+| Hàm | Trả về | Mô tả |
+| :--- | :--- | :--- |
+| `searchBanks(keyword)` | `Bank[]` | Tìm kiếm đa trường, **hỗ trợ không dấu** |
+| `sortBanks(field?, direction?)` | `Bank[]` | Sắp xếp theo `brandName`, `fullName`, hoặc `establishedDate` |
+| `getBanksByEstablishedYear(year)` | `Bank[]` | Lọc ngân hàng theo năm thành lập |
+| `groupBanksByType()` | `Record<BankType, Bank[]>` | Gom nhóm theo loại hình |
+| `getAllBrandNames()` | `string[]` | Danh sách tất cả brand name |
+| `getAllSwifts()` | `string[]` | Danh sách tất cả mã SWIFT hiện có |
+| `countBanks()` | `number` | Tổng số ngân hàng |
+| `isValidSwift(swift)` | `boolean` | Kiểm tra SWIFT/BIC hợp lệ (ISO 9362) |
 
 ---
 
 <a id="-english"></a>
-# 🇬🇧 English
 
-`vietnam-banks` is a lightweight, zero-dependency Node.js and TypeScript library providing a complete and accurate database of banks operating in Vietnam, alongside convenient search utilities for **Brand Name**, **SWIFT/BIC Code**, **Website**, **Bank Type**, and **Multi-field Full-text Search**.
+## 🇬🇧 English
+
+`vietnam-banks` is a **zero-dependency** Node.js / TypeScript library providing a complete, up-to-date database of banks operating in Vietnam, with high-performance lookup utilities.
 
 ### ✨ Features
 
-- 📋 **Comprehensive Dataset**: 45+ banks across Joint Stock Commercial, State-owned, 100% Foreign Owned, Joint Venture, Cooperative, Single Member LLC, and Policy Banks.
-- 🔎 **Flexible Lookups**: By `brandName`, `swift` code, `website` URL, or bank `type`.
-- 🔤 **Smart Full-Text Search**: Supports searching in both Vietnamese and English fields.
-- 🧊 **Immutability**: Readonly frozen dataset (`Object.freeze`) preventing accidental mutations.
-- 🌳 **Universal Exports**: ESM + CommonJS (CJS) with first-class TypeScript types (`.d.ts`).
-- 🪶 **Zero Dependencies**: Zero external runtime overhead.
+| | Feature |
+|---|---|
+| 📋 | **Complete Dataset** — 45+ banks: Joint Stock, State-owned, Foreign, Joint Venture, Cooperative, Single Member LLC, Policy Banks |
+| 🔎 | **O(1) Lookups** — Precomputed maps for `brandName`, `SWIFT`, and `type` |
+| 🔤 | **Diacritic-insensitive Search** — `searchBanks('ngoai thuong')` → Vietcombank |
+| 🧊 | **Immutable Data** — `Object.freeze` prevents accidental mutations |
+| 📦 | **Dual Module** — ESM + CommonJS with TypeScript `.d.ts` declarations |
+| 🪶 | **Zero Dependencies** — No external runtime overhead |
 
 ---
 
@@ -178,83 +242,104 @@ Các loại hình ngân hàng được phân loại sẵn:
 
 ```bash
 npm install vietnam-banks
-# or using yarn
+# or
 yarn add vietnam-banks
-# or using pnpm
+# or
 pnpm add vietnam-banks
-# or using bun
-bun add vietnam-banks
 ```
 
 ---
 
-### 🚀 Usage Guide
+### 🚀 Usage
 
-#### 1. Basic Bank Lookups
+#### 1. Bank Lookups
 
 ```typescript
-import { 
-  getBankByBrand, 
-  getBankBySwift, 
-  getBankByWebsite, 
-  BankBrand 
+import {
+  getBankByBrand,
+  getBankBySwift,
+  getBankByWebsite,
+  BankBrand,
 } from 'vietnam-banks';
 
-// Lookup using BankBrand enum (Autocomplete enabled)
+// Lookup using BankBrand constant (IDE autocomplete, typo-safe)
 const vcb = getBankByBrand(BankBrand.Vietcombank);
-console.log(vcb?.fullNameEn); 
-// Output: "Joint Stock Commercial Bank for Foreign Trade of Vietnam"
-console.log(vcb?.swift); 
-// Output: "BFTVVNVX"
+console.log(vcb?.fullNameEn); // 'Joint Stock Commercial Bank for Foreign Trade of Vietnam'
+console.log(vcb?.swift);      // 'BFTVVNVX'
 
-// Lookup by SWIFT / BIC Code (case-insensitive)
-const techcombank = getBankBySwift('VTCBVNVX');
-console.log(techcombank?.brandName); 
-// Output: "Techcombank"
+// Lookup by SWIFT/BIC code (case-insensitive)
+const tcb = getBankBySwift('VTCBVNVX');
+console.log(tcb?.brandName);  // 'Techcombank'
 
-// Lookup by website URL (automatically normalizes protocols & trailing slashes)
+// Lookup by website URL (strips https://, www., trailing slashes)
 const acb = getBankByWebsite('https://acb.com.vn/');
-console.log(acb?.brandName); 
-// Output: "ACB"
+console.log(acb?.brandName);  // 'ACB'
 ```
 
 #### 2. Search & Filter
 
 ```typescript
-import { searchBanks, getBanksByType, groupBanksByType } from 'vietnam-banks';
+import { searchBanks, getBanksByType, BANKS_BY_TYPE } from 'vietnam-banks';
 
-// Multi-field full-text search (matches brandName, fullName, fullNameEn, swift, website)
-const results = searchBanks('Military');
-// Returns banks matching "Military": MBBANK...
+// Diacritic-insensitive search (Vietnamese without accents)
+searchBanks('ngoai thuong'); // → [Vietcombank]
+searchBanks('quan doi');     // → [MBBANK]
 
-// Filter banks by category type
+// English search
+searchBanks('Military');     // → [MBBANK]
+searchBanks('Foreign Trade');// → [Vietcombank]
+
+// Filter by bank type (uses O(1) precomputed map)
 const foreignBanks = getBanksByType('100% vốn nước ngoài');
 console.log(foreignBanks.map(b => b.brandName));
-// Output: ['Woori', 'UOB', 'HSBC', 'PBVN', 'SCBVL', 'SHBVN', 'ANZVL', 'CIMB', 'HLBVN']
+// ['Woori', 'UOB', 'HSBC', 'PBVN', 'SCBVL', 'SHBVN', 'ANZVL', 'CIMB', 'HLBVN']
 
-// Group all banks by bank type category
-const grouped = groupBanksByType();
-console.log(grouped['Thương mại Cổ phần'].length);
+// Direct access to precomputed type map
+const jointStockBanks = BANKS_BY_TYPE['Thương mại Cổ phần'];
 ```
 
-#### 3. CommonJS Usage (Legacy Node.js)
+#### 3. Sorting & Advanced Utilities
+
+```typescript
+import {
+  sortBanks,
+  getBanksByEstablishedYear,
+  isValidSwift,
+} from 'vietnam-banks';
+
+// Sort by establishment date (oldest first)
+const oldest = sortBanks('establishedDate', 'asc');
+console.log(oldest[0].brandName); // 'SAIGONBANK' (est. 1987)
+
+// Sort alphabetically
+const alphabetical = sortBanks('brandName', 'asc');
+
+// Get all banks founded in a specific year
+const banks1993 = getBanksByEstablishedYear(1993);
+// → [VPBank, Techcombank, ACB, SHB, ABBANK, PGBank, GPBank]
+
+// Validate SWIFT/BIC code per ISO 9362 standard
+isValidSwift('BFTVVNVX'); // true
+isValidSwift('INVALID');  // false
+```
+
+#### 4. CommonJS Usage
 
 ```javascript
 const { banks, getBankByBrand, BankBrand } = require('vietnam-banks');
 
 const bank = getBankByBrand(BankBrand.MBBANK);
-console.log(bank.fullNameEn);
-// Output: "Military Commercial Joint Stock Bank"
+console.log(bank.fullNameEn); // 'Military Commercial Joint Stock Bank'
 ```
 
 ---
 
-### 📐 Data Schemas & Types
+### 📐 Data Schema
 
 #### `Bank` Interface
 
 ```typescript
-export interface Bank {
+interface Bank {
   /** Short brand name, e.g. "Vietcombank" */
   readonly brandName: string;
   /** Full Vietnamese name */
@@ -263,11 +348,11 @@ export interface Bank {
   readonly fullNameEn: string;
   /** Bank category type */
   readonly type: BankType;
-  /** SWIFT / BIC code (or null if not applicable) */
+  /** SWIFT/BIC code (null if not applicable) */
   readonly swift: string | null;
   /** Official website domain (excluding https://) */
   readonly website: string;
-  /** Establishment date in ISO 8601 format (YYYY-MM-DD) */
+  /** Establishment date — ISO 8601 (YYYY-MM-DD) */
   readonly establishedDate: string;
 }
 ```
@@ -276,45 +361,62 @@ export interface Bank {
 
 ### 📚 Full API Reference
 
-| Export / Method | Return Type | Description |
+#### Constants
+
+| Export | Type | Description |
 | :--- | :--- | :--- |
-| `banks` | `readonly Bank[]` | Readonly list of all Vietnamese banks. |
-| `BANKS_BY_BRAND` | `Readonly<Record<string, Bank>>` | Fast lookup map by `brandName`. |
-| `BANKS_BY_SWIFT` | `Readonly<Record<string, Bank>>` | Fast lookup map by uppercase `swift` code. |
-| `BankBrand` | `Object` | Constant object for brand name autocompletion. |
-| `getBankByBrand(brandName)` | `Bank \| undefined` | Lookup bank by brand name (case-insensitive). |
-| `getBankBySwift(swift)` | `Bank \| undefined` | Lookup bank by SWIFT code (case-insensitive). |
-| `getBankByWebsite(website)` | `Bank \| undefined` | Lookup bank by website URL/domain. |
-| `getBanksByType(type)` | `Bank[]` | Filter banks by exact `BankType`. |
-| `searchBanks(keyword)` | `Bank[]` | Multi-field search by keyword. |
-| `groupBanksByType()` | `Record<BankType, Bank[]>` | Group all banks by `BankType`. |
-| `getAllBrandNames()` | `string[]` | Return array of all brand names. |
-| `getAllSwifts()` | `string[]` | Return array of all non-null SWIFT codes. |
-| `countBanks()` | `number` | Return total bank count. |
+| `banks` | `readonly Bank[]` | Complete list of all Vietnamese banks |
+| `BANKS_BY_BRAND` | `Readonly<Record<string, Bank>>` | Fast O(1) lookup map by `brandName` |
+| `BANKS_BY_SWIFT` | `Readonly<Record<string, Bank>>` | Fast O(1) lookup map by SWIFT code |
+| `BANKS_BY_TYPE` | `Readonly<Record<BankType, Bank[]>>` | Fast O(1) lookup map by bank type |
+| `BANK_TYPES` | `readonly BankType[]` | All available bank type categories |
+| `BankBrand` | `{ [key]: string }` | Brand name constants for IDE autocompletion |
+
+#### Lookup Functions
+
+| Function | Returns | Description |
+| :--- | :--- | :--- |
+| `getBankByBrand(name)` | `Bank \| undefined` | Find by brand name (case-insensitive) |
+| `getBankBySwift(swift)` | `Bank \| undefined` | Find by SWIFT/BIC code |
+| `getBankByWebsite(url)` | `Bank \| undefined` | Find by website domain or URL |
+| `getBanksByType(type)` | `Bank[]` | Filter by bank type category |
+
+#### Search & Utility Functions
+
+| Function | Returns | Description |
+| :--- | :--- | :--- |
+| `searchBanks(keyword)` | `Bank[]` | Multi-field search with **diacritic-insensitive** support |
+| `sortBanks(field?, direction?)` | `Bank[]` | Sort by `brandName`, `fullName`, or `establishedDate` |
+| `getBanksByEstablishedYear(year)` | `Bank[]` | Filter banks by founding year |
+| `groupBanksByType()` | `Record<BankType, Bank[]>` | Group all banks by type |
+| `getAllBrandNames()` | `string[]` | Get all brand name strings |
+| `getAllSwifts()` | `string[]` | Get all non-null SWIFT codes |
+| `countBanks()` | `number` | Total bank count |
+| `isValidSwift(swift)` | `boolean` | Validate SWIFT/BIC per ISO 9362 |
 
 ---
 
-## 🛠️ Development & Building
-
-To contribute or build the package locally:
+## 🛠️ Contributing
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/legianguyenit/vietnam-banks.git
+cd vietnam-banks
 
 # Install dependencies
 npm install
 
-# Check TypeScript types
+# Type checking
 npm run typecheck
 
-# Build bundle (ESM + CJS)
+# Build (ESM + CJS + .d.ts)
 npm run build
 ```
+
+Pull requests are welcome. Please open an issue first to discuss significant changes.
 
 ---
 
 ## 📄 License
 
-[MIT](./LICENSE) © Le Gia Nguyen
-
+[MIT](./LICENSE) © [Le Gia Nguyen](https://github.com/legianguyenit)
