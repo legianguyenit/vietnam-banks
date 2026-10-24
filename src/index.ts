@@ -6,6 +6,21 @@ export { BANK_TYPES } from './types';
 export type { Bank, BankType } from './types';
 
 /* -------------------------------------------------------------------------- */
+/*                              Internal helpers                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Chuẩn hoá chuỗi: lowercase + bỏ dấu tiếng Việt.
+ * Ví dụ: "Ngoại Thương" → "ngoai thuong"
+ */
+function removeDiacritics(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+/* -------------------------------------------------------------------------- */
 /*                              Hằng số tiện dụng                             */
 /* -------------------------------------------------------------------------- */
 
@@ -28,6 +43,33 @@ export const BANKS_BY_SWIFT: Readonly<Record<string, Bank>> = Object.freeze(
     if (bank.swift) acc[bank.swift.toUpperCase()] = bank;
     return acc;
   }, {})
+);
+
+/**
+ * Bản đồ tra cứu nhanh `type -> Bank[]` (precomputed).
+ * @example BANKS_BY_TYPE['Thương mại Cổ phần'] // [...]
+ */
+export const BANKS_BY_TYPE: Readonly<Record<BankType, Bank[]>> = Object.freeze(
+  banks.reduce<Record<string, Bank[]>>((acc, bank) => {
+    (acc[bank.type] ??= []).push(bank);
+    return acc;
+  }, {}) as Record<BankType, Bank[]>
+);
+
+/**
+ * Index tìm kiếm không dấu — precomputed một lần khi load module.
+ * Mỗi phần tử tương ứng với banks[i].
+ */
+const _searchIndex: string[] = banks.map((b) =>
+  [
+    b.brandName,
+    b.fullName,
+    b.fullNameEn,
+    b.swift ?? '',
+    b.website,
+  ]
+    .map(removeDiacritics)
+    .join(' ')
 );
 
 /* -------------------------------------------------------------------------- */
@@ -67,23 +109,20 @@ export function getBankByWebsite(website: string): Bank | undefined {
  * Lọc ngân hàng theo loại hình.
  */
 export function getBanksByType(type: BankType): Bank[] {
-  return banks.filter((b) => b.type === type);
+  return BANKS_BY_TYPE[type] ?? [];
 }
 
 /**
- * Tìm kiếm ngân hàng theo từ khoá (brandName, fullName, fullNameEn, swift, website).
+ * Tìm kiếm ngân hàng theo từ khoá.
+ * Hỗ trợ tìm **không dấu** ("ngoai thuong" → Vietcombank).
+ * Tìm trên: brandName, fullName, fullNameEn, swift, website.
+ * @example searchBanks('ngoai thuong') // [Vietcombank]
+ * @example searchBanks('quan doi')     // [MBBANK]
  */
 export function searchBanks(keyword: string): Bank[] {
-  const q = keyword.trim().toLowerCase();
+  const q = removeDiacritics(keyword.trim());
   if (!q) return [...banks];
-  return banks.filter(
-    (b) =>
-      b.brandName.toLowerCase().includes(q) ||
-      b.fullName.toLowerCase().includes(q) ||
-      b.fullNameEn.toLowerCase().includes(q) ||
-      (b.swift ?? '').toLowerCase().includes(q) ||
-      b.website.toLowerCase().includes(q)
-  );
+  return banks.filter((_, i) => _searchIndex[i]?.includes(q) ?? false);
 }
 
 /**
@@ -110,6 +149,51 @@ export function groupBanksByType(): Record<BankType, Bank[]> {
     (acc[bank.type] ??= []).push(bank);
     return acc;
   }, {}) as Record<BankType, Bank[]>;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Tiện ích bổ sung                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Lấy danh sách ngân hàng thành lập trong một năm cụ thể.
+ * @example getBanksByEstablishedYear(1993) // [VPBank, Techcombank, ACB, ...]
+ */
+export function getBanksByEstablishedYear(year: number): Bank[] {
+  const prefix = String(year);
+  return banks.filter((b) => b.establishedDate.startsWith(prefix));
+}
+
+/** Các trường có thể dùng để sắp xếp ngân hàng. */
+export type BankSortField = 'brandName' | 'fullName' | 'establishedDate';
+
+/**
+ * Trả về bản sao mảng bank đã sắp xếp theo trường chỉ định.
+ * @param field  Trường sắp xếp: 'brandName' | 'fullName' | 'establishedDate'
+ * @param direction 'asc' (mặc định) hoặc 'desc'
+ * @example sortBanks('establishedDate', 'asc') // từ cũ nhất → mới nhất
+ */
+export function sortBanks(
+  field: BankSortField = 'brandName',
+  direction: 'asc' | 'desc' = 'asc'
+): Bank[] {
+  const dir = direction === 'asc' ? 1 : -1;
+  return [...banks].sort((a, b) =>
+    a[field] < b[field] ? -dir : a[field] > b[field] ? dir : 0
+  );
+}
+
+/**
+ * Kiểm tra mã SWIFT/BIC có hợp lệ theo chuẩn ISO 9362.
+ * Format: 4 ký tự bank + 2 ký tự country + 2 ký tự location + (tuỳ chọn) 3 ký tự branch.
+ * @example isValidSwift('BFTVVNVX')   // true
+ * @example isValidSwift('INVALID')    // false
+ */
+export function isValidSwift(swift: string): boolean {
+  // ISO 9362: [A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?
+  return /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(
+    swift.trim().toUpperCase()
+  );
 }
 
 /**
